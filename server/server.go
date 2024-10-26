@@ -1,11 +1,19 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
 
-func Run(listen string) error {
-	http.HandleFunc("/probe", getProbe)
-	http.HandleFunc("/api/get", apiGet)
-	http.HandleFunc("/api/walk", apiWalk)
+	"github.com/hramcovdv/snmp-proxy/snmp"
+)
 
-	return http.ListenAndServe(listen, nil)
+func Run(addr string) error {
+	http.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
+		page := probePage()
+		page.Render(w)
+	})
+
+	http.HandleFunc("/api/get", apiHandlerFunc(snmp.Get))
+	http.HandleFunc("/api/walk", apiHandlerFunc(snmp.Walk))
+
+	return http.ListenAndServe(addr, nil)
 }

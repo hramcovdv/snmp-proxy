@@ -24,10 +24,11 @@ func probeForm(action, method string) Node {
 	return Form(
 		Attr("action", action),
 		Attr("method", method),
-		P(oidInput("")),
-		P(hostnameInput("127.0.0.1")),
+		P(oidInput(".1.3.6.1.2.1.1.1.0")),
+		P(targetInput("127.0.0.1")),
 		P(communityInput("public")),
-		P(Button(Text("Submit"))),
+		P(versionSelect("1")),
+		P(Button(Text("Submit"), Attr("type", "submit"))),
 	)
 }
 
@@ -41,11 +42,11 @@ func oidInput(value string) Node {
 	)
 }
 
-func hostnameInput(value string) Node {
+func targetInput(value string) Node {
 	return Input(
 		Attr("type", "text"),
-		Attr("name", "hostname"),
-		Attr("placeholder", "Hostname"),
+		Attr("name", "target"),
+		Attr("placeholder", "Target"),
 		Attr("required", ""),
 		Attr("value", value),
 	)
@@ -59,4 +60,12 @@ func communityInput(value string) Node {
 		Attr("required", ""),
 		Attr("value", value),
 	)
+}
+
+func versionSelect(value string) Node {
+	return Select(
+		Attr("name", "version"),
+		Option(Text("Version 1"), Attr("value", "1")),
+		Option(Text("Version 2c"), Attr("value", "2")),
+		Attr("value", value))
 }

@@ -2,19 +2,24 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/hramcovdv/snmp-proxy/server"
 )
 
-var listen string
+var (
+	version  string
+	bindAddr string
+)
 
 func init() {
-	flag.StringVar(&listen, "listen", ":8080", "Listen address")
+	flag.StringVar(&bindAddr, "bind", ":8080", "Bind to address")
 	flag.Parse()
 }
 
 func main() {
-	log.Print("Listening on ", listen)
-	log.Fatal(server.Run(listen))
+	fmt.Println("Version", version)
+	log.Print("Listening on ", bindAddr)
+	log.Fatal(server.Run(bindAddr))
 }

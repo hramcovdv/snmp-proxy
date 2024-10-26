@@ -6,19 +6,19 @@ import (
 	"github.com/gosnmp/gosnmp"
 )
 
-func newParams(target, community string) *gosnmp.GoSNMP {
+func newParams(r *SnmpRequest) *gosnmp.GoSNMP {
 	return &gosnmp.GoSNMP{
-		Target:    target,
+		Target:    r.Target,
 		Port:      161,
-		Community: community,
-		Version:   gosnmp.Version2c,
-		Timeout:   time.Second * 5,
+		Community: r.Community,
+		Version:   gosnmp.SnmpVersion(r.Version),
+		Timeout:   5 * time.Second,
 		Retries:   3,
 	}
 }
 
 func Get(r *SnmpRequest) (resp []SnmpResponse, err error) {
-	params := newParams(r.Target, r.Community)
+	params := newParams(r)
 
 	err = params.Connect()
 	if err != nil {
@@ -39,7 +39,7 @@ func Get(r *SnmpRequest) (resp []SnmpResponse, err error) {
 }
 
 func Walk(r *SnmpRequest) (resp []SnmpResponse, err error) {
-	params := newParams(r.Target, r.Community)
+	params := newParams(r)
 
 	err = params.Connect()
 	if err != nil {
