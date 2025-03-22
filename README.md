@@ -21,8 +21,9 @@ docker run --name snmp-proxy -p 8080:8080 -d snmp-proxy:latest
 To perform a *GetRequest* use HTTP endpoint `/api/get` with POST requests:
 ```
 curl -X POST \
--d 'oid=.1.3.6.1.2.1.1.1.0' \
--d 'hostname=192.168.0.1' \
+-d 'oids=.1.3.6.1.2.1.1.1.0' \
+-d 'oids=.1.3.6.1.2.1.1.5.0' \
+-d 'target=192.168.0.1' \
 -d 'community=public' \
 http://localhost:8080/api/get
 ```
@@ -30,8 +31,8 @@ http://localhost:8080/api/get
 for *GetNextRequest* use `/api/walk`:
 ```
 curl -X POST \
--d 'oid=.1.3.6.1.2.1.2.2.1.2' \
--d 'hostname=192.168.0.1' \
+-d 'oids=.1.3.6.1.2.1.2.2.1.2' \
+-d 'target=192.168.0.1' \
 -d 'community=public' \
 http://localhost:8080/api/walk
 ```

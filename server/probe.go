@@ -11,7 +11,7 @@ func probePage() Node {
 			Title("SNMP Probe"),
 		),
 		Body(
-			H4(Text("SNMP Probe")),
+			H4(Text("Get Request")),
 			probeForm("/api/get", "post"),
 			Hr(),
 			H4(Text("Walk Request")),
@@ -24,7 +24,7 @@ func probeForm(action, method string) Node {
 	return Form(
 		Attr("action", action),
 		Attr("method", method),
-		P(oidInput(".1.3.6.1.2.1.1.1.0")),
+		P(oidsInput(".1.3.6.1.2.1.1.1.0")),
 		P(targetInput("127.0.0.1")),
 		P(communityInput("public")),
 		P(versionSelect("1")),
@@ -32,10 +32,10 @@ func probeForm(action, method string) Node {
 	)
 }
 
-func oidInput(value string) Node {
+func oidsInput(value string) Node {
 	return Input(
 		Attr("type", "text"),
-		Attr("name", "oid"),
+		Attr("name", "oids"),
 		Attr("placeholder", "OID"),
 		Attr("required", ""),
 		Attr("value", value),

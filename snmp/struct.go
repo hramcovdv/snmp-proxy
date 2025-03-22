@@ -1,10 +1,10 @@
 package snmp
 
 type SnmpRequest struct {
-	Oid       string `schema:"oid,required"`
-	Target    string `schema:"target,required"`
-	Community string `schema:"community,default:public"`
-	Version   int    `schema:"version,default:1"`
+	Oids      []string `schema:"oids,required"`
+	Target    string   `schema:"target,required"`
+	Community string   `schema:"community,default:public"`
+	Version   int      `schema:"version,default:1"`
 }
 
 type SnmpResponse struct {

@@ -12,8 +12,8 @@ func Run(addr string) error {
 		page.Render(w)
 	})
 
-	http.HandleFunc("/api/get", apiHandlerFunc(snmp.Get))
-	http.HandleFunc("/api/walk", apiHandlerFunc(snmp.Walk))
+	http.HandleFunc("/api/get", logHandlerFunc(snmpHandlerFunc(snmp.Get)))
+	http.HandleFunc("/api/walk", logHandlerFunc(snmpHandlerFunc(snmp.Walk)))
 
 	return http.ListenAndServe(addr, nil)
 }

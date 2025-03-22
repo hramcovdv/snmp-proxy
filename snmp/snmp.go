@@ -26,7 +26,7 @@ func Get(r *SnmpRequest) (resp []SnmpResponse, err error) {
 	}
 	defer params.Conn.Close()
 
-	result, err := params.Get([]string{r.Oid})
+	result, err := params.Get(r.Oids)
 	if err != nil {
 		return resp, err
 	}
@@ -47,13 +47,15 @@ func Walk(r *SnmpRequest) (resp []SnmpResponse, err error) {
 	}
 	defer params.Conn.Close()
 
-	result, err := params.WalkAll(r.Oid)
-	if err != nil {
-		return resp, err
-	}
+	for _, oid := range r.Oids {
+		result, err := params.WalkAll(oid)
+		if err != nil {
+			return resp, err
+		}
 
-	for _, pdu := range result {
-		resp = append(resp, getSnmpResponse(pdu))
+		for _, pdu := range result {
+			resp = append(resp, getSnmpResponse(pdu))
+		}
 	}
 
 	return resp, nil

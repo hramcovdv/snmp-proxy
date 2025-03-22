@@ -1,4 +1,4 @@
-BINARY_VERSION=v1.0.2
+BINARY_VERSION=1.0.3
 BINARY_NAME=snmp-proxy
 
 build:
