@@ -7,13 +7,9 @@ import (
 )
 
 func Run(addr string) error {
-	http.HandleFunc("/probe", func(w http.ResponseWriter, r *http.Request) {
-		page := probePage()
-		page.Render(w)
-	})
-
-	http.HandleFunc("/api/get", logHandlerFunc(snmpHandlerFunc(snmp.Get)))
-	http.HandleFunc("/api/walk", logHandlerFunc(snmpHandlerFunc(snmp.Walk)))
+	http.HandleFunc("GET /probe", handleProbe)
+	http.HandleFunc("POST /get", handleError(handleSnmp(snmp.Get)))
+	http.HandleFunc("POST /walk", handleError(handleSnmp(snmp.Walk)))
 
 	return http.ListenAndServe(addr, nil)
 }

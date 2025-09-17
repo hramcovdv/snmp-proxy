@@ -1,62 +1,45 @@
 package snmp
 
-import (
-	"time"
-
-	"github.com/gosnmp/gosnmp"
-)
-
-func newParams(r *SnmpRequest) *gosnmp.GoSNMP {
-	return &gosnmp.GoSNMP{
-		Target:    r.Target,
-		Port:      161,
-		Community: r.Community,
-		Version:   gosnmp.SnmpVersion(r.Version),
-		Timeout:   5 * time.Second,
-		Retries:   3,
-	}
-}
-
-func Get(r *SnmpRequest) (resp []SnmpResponse, err error) {
+func Get(r *SnmpRequest) (res []SnmpResponse, err error) {
 	params := newParams(r)
 
 	err = params.Connect()
 	if err != nil {
-		return resp, err
+		return res, err
 	}
 	defer params.Conn.Close()
 
 	result, err := params.Get(r.Oids)
 	if err != nil {
-		return resp, err
+		return res, err
 	}
 
 	for _, pdu := range result.Variables {
-		resp = append(resp, getSnmpResponse(pdu))
+		res = append(res, newSnmpResponse(pdu))
 	}
 
-	return resp, nil
+	return res, nil
 }
 
-func Walk(r *SnmpRequest) (resp []SnmpResponse, err error) {
+func Walk(r *SnmpRequest) (res []SnmpResponse, err error) {
 	params := newParams(r)
 
 	err = params.Connect()
 	if err != nil {
-		return resp, err
+		return res, err
 	}
 	defer params.Conn.Close()
 
 	for _, oid := range r.Oids {
-		result, err := params.WalkAll(oid)
+		results, err := params.WalkAll(oid)
 		if err != nil {
-			return resp, err
+			return res, err
 		}
 
-		for _, pdu := range result {
-			resp = append(resp, getSnmpResponse(pdu))
+		for _, pdu := range results {
+			res = append(res, newSnmpResponse(pdu))
 		}
 	}
 
-	return resp, nil
+	return res, nil
 }

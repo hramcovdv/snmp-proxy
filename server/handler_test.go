@@ -23,12 +23,12 @@ var (
 	walkRequest = getRequest
 )
 
-func TestApiGet(t *testing.T) {
+func TestHttpGet(t *testing.T) {
 	form := url.Values{}
 
 	encoder.Encode(getRequest, form)
 
-	req, err := http.NewRequest(http.MethodPost, "/api/get", nil)
+	req, err := http.NewRequest(http.MethodPost, "/get", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -36,9 +36,9 @@ func TestApiGet(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		code, err := snmpHandlerFunc(snmp.Get)(w, r)
+		err := handleSnmp(snmp.Get)(w, r)
 		if err != nil {
-			http.Error(w, err.Error(), code)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
 
@@ -52,12 +52,12 @@ func TestApiGet(t *testing.T) {
 	// t.Log(rr.Body.String())
 }
 
-func TestApiWalk(t *testing.T) {
+func TestHttpWalk(t *testing.T) {
 	form := url.Values{}
 
 	encoder.Encode(walkRequest, form)
 
-	req, err := http.NewRequest(http.MethodPost, "/api/walk", nil)
+	req, err := http.NewRequest(http.MethodPost, "/walk", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,9 +65,9 @@ func TestApiWalk(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		code, err := snmpHandlerFunc(snmp.Walk)(w, r)
+		err := handleSnmp(snmp.Walk)(w, r)
 		if err != nil {
-			http.Error(w, err.Error(), code)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
 

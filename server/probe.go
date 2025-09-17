@@ -1,6 +1,8 @@
 package server
 
 import (
+	"net/http"
+
 	. "maragu.dev/gomponents"
 	. "maragu.dev/gomponents/html"
 )
@@ -12,10 +14,10 @@ func probePage() Node {
 		),
 		Body(
 			H4(Text("Get Request")),
-			probeForm("/api/get", "post"),
+			probeForm("/get", "post"),
 			Hr(),
 			H4(Text("Walk Request")),
-			probeForm("/api/walk", "post"),
+			probeForm("/walk", "post"),
 		),
 	)
 }
@@ -68,4 +70,10 @@ func versionSelect(value string) Node {
 		Option(Text("Version 1"), Attr("value", "1")),
 		Option(Text("Version 2c"), Attr("value", "2")),
 		Attr("value", value))
+}
+
+func handleProbe(w http.ResponseWriter, r *http.Request) {
+	page := probePage()
+
+	page.Render(w)
 }
