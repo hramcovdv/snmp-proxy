@@ -36,8 +36,7 @@ func TestHttpGet(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		err := handleSnmp(snmp.Get)(w, r)
-		if err != nil {
+		if err := handleSnmp(snmp.Get)(w, r); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})
@@ -65,8 +64,7 @@ func TestHttpWalk(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		err := handleSnmp(snmp.Walk)(w, r)
-		if err != nil {
+		if err := handleSnmp(snmp.Walk)(w, r); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})

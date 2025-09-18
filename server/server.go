@@ -2,14 +2,19 @@ package server
 
 import (
 	"net/http"
-
-	"github.com/hramcovdv/snmp-proxy/snmp"
 )
+
+func handleProbe(w http.ResponseWriter, r *http.Request) {
+	page := probePage()
+
+	page.Render(w)
+}
 
 func Run(addr string) error {
 	http.HandleFunc("GET /probe", handleProbe)
-	http.HandleFunc("POST /get", handleError(handleSnmp(snmp.Get)))
-	http.HandleFunc("POST /walk", handleError(handleSnmp(snmp.Walk)))
+
+	http.HandleFunc("POST /get", getHandler)
+	http.HandleFunc("POST /walk", walkHandler)
 
 	return http.ListenAndServe(addr, nil)
 }

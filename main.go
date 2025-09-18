@@ -2,8 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/hramcovdv/snmp-proxy/server"
 )
@@ -19,7 +18,8 @@ func init() {
 }
 
 func main() {
-	fmt.Println("Version", version)
-	log.Print("Listening on ", bindAddr)
-	log.Fatal(server.Run(bindAddr))
+	slog.Info("Start server", "version", version, "listen", bindAddr)
+	if err := server.Run(bindAddr); err != nil {
+		slog.Error("Stop server", "error", err.Error())
+	}
 }

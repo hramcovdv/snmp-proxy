@@ -1,6 +1,25 @@
 package snmp
 
-import "context"
+import (
+	"context"
+	"time"
+
+	g "github.com/gosnmp/gosnmp"
+)
+
+type RequestFunc func(ctx context.Context, r *SnmpRequest) ([]SnmpResponse, error)
+
+func newParams(ctx context.Context, r *SnmpRequest) *g.GoSNMP {
+	return &g.GoSNMP{
+		Target:    r.Target,
+		Port:      161,
+		Community: r.Community,
+		Version:   g.SnmpVersion(r.Version),
+		Timeout:   3 * time.Second,
+		Retries:   1,
+		Context:   ctx,
+	}
+}
 
 func Get(ctx context.Context, r *SnmpRequest) (res []SnmpResponse, err error) {
 	params := newParams(ctx, r)

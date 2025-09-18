@@ -2,14 +2,19 @@ package server
 
 import (
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/schema"
 	"github.com/hramcovdv/snmp-proxy/snmp"
 )
 
-var decoder = schema.NewDecoder()
+var (
+	decoder = schema.NewDecoder()
+
+	getHandler  = handleError(handleSnmp(snmp.Get))
+	walkHandler = handleError(handleSnmp(snmp.Walk))
+)
 
 type errorHandlerFunc func(http.ResponseWriter, *http.Request) error
 
@@ -17,7 +22,8 @@ func handleError(fn errorHandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := fn(w, r); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			log.Printf("%s %s %s", r.Method, r.URL, err.Error())
+
+			slog.Error("Request error", "method", r.Method, "url", r.URL.String(), "message", err.Error())
 		}
 	}
 }
@@ -28,21 +34,26 @@ func handleSnmp(fn snmp.RequestFunc) errorHandlerFunc {
 			return err
 		}
 
-		var s snmp.SnmpRequest
-		if err := decoder.Decode(&s, r.PostForm); err != nil {
+		req := new(snmp.SnmpRequest)
+		if err := decoder.Decode(req, r.PostForm); err != nil {
 			return err
 		}
 
-		resp, err := fn(r.Context(), &s)
+		res, err := fn(r.Context(), req)
 		if err != nil {
 			return err
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(resp); err != nil {
+		if err := writeJSON(w, res); err != nil {
 			return err
 		}
 
 		return nil
 	}
+}
+
+func writeJSON(w http.ResponseWriter, data any) error {
+	w.Header().Set("Content-Type", "application/json")
+
+	return json.NewEncoder(w).Encode(data)
 }
