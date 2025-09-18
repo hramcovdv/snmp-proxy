@@ -1,6 +1,7 @@
 package snmp
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"time"
@@ -8,7 +9,7 @@ import (
 	g "github.com/gosnmp/gosnmp"
 )
 
-type RequestFunc func(r *SnmpRequest) ([]SnmpResponse, error)
+type RequestFunc func(ctx context.Context, r *SnmpRequest) ([]SnmpResponse, error)
 
 type SnmpRequest struct {
 	Oids      []string `schema:"oids,required"`
@@ -23,7 +24,7 @@ type SnmpResponse struct {
 	Value any    `json:"value"`
 }
 
-func newParams(r *SnmpRequest) *g.GoSNMP {
+func newParams(ctx context.Context, r *SnmpRequest) *g.GoSNMP {
 	return &g.GoSNMP{
 		Target:    r.Target,
 		Port:      161,
@@ -31,6 +32,7 @@ func newParams(r *SnmpRequest) *g.GoSNMP {
 		Version:   g.SnmpVersion(r.Version),
 		Timeout:   3 * time.Second,
 		Retries:   1,
+		Context:   ctx,
 	}
 }
 

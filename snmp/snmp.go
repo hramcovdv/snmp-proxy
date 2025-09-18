@@ -1,7 +1,9 @@
 package snmp
 
-func Get(r *SnmpRequest) (res []SnmpResponse, err error) {
-	params := newParams(r)
+import "context"
+
+func Get(ctx context.Context, r *SnmpRequest) (res []SnmpResponse, err error) {
+	params := newParams(ctx, r)
 
 	err = params.Connect()
 	if err != nil {
@@ -21,8 +23,8 @@ func Get(r *SnmpRequest) (res []SnmpResponse, err error) {
 	return res, nil
 }
 
-func Walk(r *SnmpRequest) (res []SnmpResponse, err error) {
-	params := newParams(r)
+func Walk(ctx context.Context, r *SnmpRequest) (res []SnmpResponse, err error) {
+	params := newParams(ctx, r)
 
 	err = params.Connect()
 	if err != nil {

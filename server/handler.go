@@ -33,7 +33,7 @@ func handleSnmp(fn snmp.RequestFunc) errorHandlerFunc {
 			return err
 		}
 
-		resp, err := fn(&s)
+		resp, err := fn(r.Context(), &s)
 		if err != nil {
 			return err
 		}
